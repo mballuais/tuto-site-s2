@@ -1,4 +1,3 @@
-// src/app/api/tutorials/route.ts
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
@@ -17,7 +16,6 @@ export async function GET(request: Request) {
   return NextResponse.json(tutorials);
 }
 
-// 🔥 Ajoute ça pour gérer la création
 export async function POST(req: Request) {
   try {
     const body = await req.json();
