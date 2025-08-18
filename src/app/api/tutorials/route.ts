@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  // Optionnel : on peut lire ?cat=… et ?sort=asc|desc
   const category = searchParams.get("cat");
   const sort = searchParams.get("sort") === "asc" ? "asc" : "desc";
 
@@ -16,4 +15,37 @@ export async function GET(request: Request) {
   });
 
   return NextResponse.json(tutorials);
+}
+
+// 🔥 Ajoute ça pour gérer la création
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const { title, category, type, content, videoUrl } = body;
+
+    if (!title || !category || !type) {
+      return NextResponse.json(
+        { error: "Champs manquants" },
+        { status: 400 }
+      );
+    }
+
+    const tutorial = await prisma.tutorial.create({
+      data: {
+        title,
+        category,
+        type,
+        content,
+        videoUrl,
+      },
+    });
+
+    return NextResponse.json(tutorial, { status: 201 });
+  } catch (error) {
+    console.error("Erreur POST /api/tutorials:", error);
+    return NextResponse.json(
+      { error: "Erreur interne serveur" },
+      { status: 500 }
+    );
+  }
 }
